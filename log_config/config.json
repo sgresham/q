@@ -1,0 +1,27 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    "formatters": {
+        "simple": {
+            "format": "%(levelname)s: %(message)s"
+        }
+    },
+    "handlers": {
+        "stdout": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+            "stream": "ext://sys.stdout"
+        },
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "DEBUG",
+            "formatter": "simple",
+            "filename": "logs/q_core.log",
+            "maxBytes": 10000000,
+            "backupCount": 100
+        }
+    },
+    "loggers": {
+        "root": {"level": "DEBUG", "handlers": ["stdout", "file"]}
+    }
+}

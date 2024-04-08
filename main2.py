@@ -39,8 +39,9 @@ class TriggerListener():
         self.is_trigger_listener_active = True
         self.recognizer.pause_threshold = 0.5
 
+        print('--- Optimizing for ambient noise ---')
         with self.microphone as source:
-            self.recognizer.adjust_for_ambient_noise(source, duration=2.0)
+            self.recognizer.adjust_for_ambient_noise(source, duration=5.0)
 
         self.stop_listening = self.recognizer.listen_in_background(self.microphone, self.listen_for_trigger, phrase_time_limit=1.5)
 
