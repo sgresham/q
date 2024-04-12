@@ -44,7 +44,22 @@ class TriggerListener:
 
     def manage_llm(self, query):
         response = query_api(query, self.get_conversation_history_string())
-        model_response = response[0]['model_response']
+        if not response:
+            # If response is empty (indicating an error in the API call), log and return
+            logger.error("Failed to get a valid response from the API.")
+            return
+
+        if len(response) == 0:
+            # If response is empty, log and return
+            logger.error("No model response found in the API response.")
+            return
+
+        model_response = response[0].get('model_response')
+        if model_response is None:
+            # If model response is None, log and return
+            logger.error("No model response found in the API response.")
+            return
+
         # Store the query and full_response in the conversation history
         self.conversation_history.append({'user_prompt': query, 'model_response': model_response})
         # Log the full response
@@ -52,7 +67,22 @@ class TriggerListener:
     
     def quick_llm(self, query):
         response = query_api(query, None)
-        model_response = response[0]['model_response']
+        if not response:
+            # If response is empty (indicating an error in the API call), log and return
+            logger.error("Failed to get a valid response from the API.")
+            return
+
+        if len(response) == 0:
+            # If response is empty, log and return
+            logger.error("No model response found in the API response.")
+            return
+
+        model_response = response[0].get('model_response')
+        if model_response is None:
+            # If model response is None, log and return
+            logger.error("No model response found in the API response.")
+            return
+
         # Log the full response
         logger.info(model_response)
 
@@ -87,7 +117,7 @@ class TriggerListener:
             transcription_history_pattern = r'\btranscri(?:be|pt)|5\s*minutes\s*summary\b'
             summarize_transcript_pattern = r'\bsummar(?:ize|y)\b'
 
-            output = recognizer.recognize_whisper(audio, model= "medium.en", language="english")
+            output = recognizer.recognize_whisper(audio, model= "tiny.en", language="english")
             logger.info(output)
             if 'alfred' in output.lower(): 
                 if re.search(shutdown_pattern, output, re.IGNORECASE):
