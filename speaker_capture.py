@@ -25,7 +25,7 @@ class TriggerListener:
     def __init__(self, state):
         self.state = state
         self.recognizer = sr.Recognizer()
-        self.microphone = sr.Microphone(device_index=5)
+        self.microphone = sr.Microphone(device_index=19)
         self.is_trigger_listener_active = None
         self.start_listener()
 
@@ -37,7 +37,7 @@ class TriggerListener:
 
     def just_decode(self, recognizer, audio):
         try:
-            output = recognizer.recognize_whisper(audio, model= "tiny.en", language="english")
+            output = recognizer.recognize_whisper(audio, model= "medium.en", language="english")
             logger.info(output)
             if 'alfred' in output.lower(): 
                 if re.search(r'\b(shut\s?down|power\s?off|terminate)\b', output, re.IGNORECASE):

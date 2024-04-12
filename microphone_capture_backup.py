@@ -8,20 +8,7 @@ import re
 import threading
 from llm_integration.private_gpt import query_api
 from tools.extract_log_chat import getlogsbyduration
-from recognize_speech import speech_recognition_with_noise_reduction, speech_recognition_mic_only
 import torch
-import pyaudio
-import numpy as np
-import noisereduce as nr
-import whisper
-
-# Parameters
-CHUNK = 16000*5
-FORMAT = pyaudio.paInt16
-FORMATOUT = pyaudio.paInt16
-CHANNELS = 1
-RATE = 16000
-GAIN = 10.0  # Amplification factor
 
 logger = logging.getLogger('q_root')
 print (torch.cuda.is_available())
@@ -118,52 +105,21 @@ class TriggerListener:
         except sr.RequestError as e:
             print("Whisper error; {0}".format(e))
 
-    def adjust_for_ambient_noise_with_live_microphone(self):
-        with self.microphone as source:
-            self.recognizer.adjust_for_ambient_noise(source)
-
     def start_listener(self):
-        model = whisper.load_model("medium.en")
         print("Starting trigger listener")
         self.recognizer.pause_threshold = 0.5
 
-        # Create a PyAudio object
-        p = pyaudio.PyAudio()
+        print('--- Optimizing for ambient noise. Please wait 5 seconds ---')
+        with self.microphone as source:
+            self.recognizer.adjust_for_ambient_noise(source, duration=5.0)
+        print('--- Ok. Ready for voice ---')
+        self.stop_listening = self.recognizer.listen_in_background(self.microphone, self.just_decode)
+        
+        # Keep the listener active until is_trigger_listener_active is set
+        while self.is_trigger_listener_active.is_set():
+            time.sleep(0.1)
 
-        # Open a stream for loopback audio (input from speakers)
-        stream_speakers = p.open(format=FORMAT,
-                                channels=CHANNELS,
-                                rate=RATE,
-                                input=True,
-                                frames_per_buffer=CHUNK,
-                                input_device_index=5)  # Adjust the input device index accordingly
-
-        # Open a stream for microphone input
-        stream_mic = p.open(format=FORMAT,
-                            channels=CHANNELS,
-                            rate=RATE,
-                            input=True,
-                            frames_per_buffer=CHUNK,
-                            input_device_index=2)  # Adjust the input device index accordingly
-
-        while True:
-            data = stream_mic.read(CHUNK)
-            audio = np.frombuffer(data, np.int16).astype(np.float32)/ 32768.0
-
-            # load audio and pad/trim it to fit 30 seconds
-            #audio = whisper.load_audio("/home/paul/temp.wav")
-            audio = whisper.pad_or_trim(audio)
-
-            # make log-Mel spectrogram and move to the same device as the model
-            mel = whisper.log_mel_spectrogram(audio).to(model.device)
-
-            # decode the audio
-            options = whisper.DecodingOptions(fp16=False, language='english')
-            result = whisper.decode(model, mel, options)
-
-            # print the recognized text
-            print(result.text)
-
+        print("TriggerListener finished!")
 
 if __name__ == "__main__":
     setup_logging()

@@ -2,7 +2,7 @@ import requests
 import json
 import logging
 
-def query_api(query, history, hostname="localhost", port=8001, verbose=False, debug=False):
+def query_api(query, history, hostname="10.10.10.30", port=8001, verbose=False, debug=False):
     results = []
     logger = logging.getLogger('q_root')
     logger.info(f"Running a query ${query}")

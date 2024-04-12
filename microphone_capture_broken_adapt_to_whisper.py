@@ -147,22 +147,70 @@ class TriggerListener:
                             input_device_index=2)  # Adjust the input device index accordingly
 
         while True:
-            data = stream_mic.read(CHUNK)
-            audio = np.frombuffer(data, np.int16).astype(np.float32)/ 32768.0
+        # Read loopback audio data (from speakers)
+            speakers_data = stream_speakers.read(CHUNK)
 
-            # load audio and pad/trim it to fit 30 seconds
-            #audio = whisper.load_audio("/home/paul/temp.wav")
-            audio = whisper.pad_or_trim(audio)
+            # Read microphone audio data
+            mic_data = stream_mic.read(CHUNK)
 
-            # make log-Mel spectrogram and move to the same device as the model
-            mel = whisper.log_mel_spectrogram(audio).to(model.device)
+            # Process audio with noise reduction
+            reduced_noise_data = speech_recognition_with_noise_reduction(speakers_data, mic_data, rate=RATE, gain=GAIN)
+                # Convert reduced noise data to AudioData
+            # audio_data = convert_to_audio_data(reduced_noise_data, rate=RATE)
 
-            # decode the audio
-            options = whisper.DecodingOptions(fp16=False, language='english')
-            result = whisper.decode(model, mel, options)
+            # # Adjust for ambient noise with live microphone input
+            # self.adjust_for_ambient_noise_with_live_microphone()
+                
+            # # Recognize speech
+            # self.just_decode(self.recognizer, audio_data)
 
-            # print the recognized text
-            print(result.text)
+            time.sleep(0.1)
+
+            while True:
+                    # load audio and pad/trim it to fit 30 seconds
+                    #audio = whisper.load_audio("/home/paul/temp.wav")
+                    audio_data = whisper.pad_or_trim(reduced_noise_data)
+
+                    # make log-Mel spectrogram and move to the same device as the model
+                    mel = whisper.log_mel_spectrogram(audio_data).to(model.device)
+
+                    import wave
+
+                    # Set the desired duration in seconds
+                    desired_duration = 10
+                    total_frames = 0
+                    audio_frames = []
+
+                    while total_frames / RATE < desired_duration:
+                        # Read loopback audio data (from speakers)
+                        speakers_data = stream_speakers.read(CHUNK)
+
+                        # Read microphone audio data
+                        mic_data = stream_mic.read(CHUNK)
+
+                        # Process audio with noise reduction
+                        reduced_noise_data = speech_recognition_mic_only(mic_data, rate=RATE, gain=GAIN)
+                        
+                        # Accumulate audio frames
+                        audio_frames.append(reduced_noise_data)
+                        total_frames += len(reduced_noise_data)
+
+                    # Concatenate audio frames into a single audio data
+                    audio_data = b''.join(audio_frames)
+
+                    # Save the audio data to a WAV file
+                    with wave.open('output.wav', 'wb') as wf:
+                        wf.setnchannels(CHANNELS)
+                        wf.setsampwidth(p.get_sample_size(FORMAT))
+                        wf.setframerate(RATE)
+                        wf.writeframes(audio_data)
+
+                    # decode the audio
+                    # options = whisper.DecodingOptions(language='english', fp16=False)
+                    # result = whisper.decode(model, mel, options)
+
+                    # # print the recognized text
+                    # print(result.text)
 
 
 if __name__ == "__main__":

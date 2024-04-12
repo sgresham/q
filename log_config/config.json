@@ -3,7 +3,21 @@
     "disable_existing_loggers": false,
     "formatters": {
         "simple": {
-            "format": "%(levelname)s: %(message)s"
+            "format": "%(levelname)s: %(message)s",
+            "datefmt": "%Y-%m-%dT%H:%M:%S%z"
+        },
+        "json": {
+            "()": "customlogger.MyJSONFormatter",
+            "fmt_keys": {
+              "level": "levelname",
+              "message": "message",
+              "timestamp": "timestamp",
+              "logger": "name",
+              "module": "module",
+              "function": "funcName",
+              "line": "lineno",
+              "thread_name": "threadName"
+            }
         }
     },
     "handlers": {
@@ -15,8 +29,8 @@
         "file": {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
-            "formatter": "simple",
-            "filename": "logs/q_core.log",
+            "formatter": "json",
+            "filename": "logs/q_core.json",
             "maxBytes": 10000000,
             "backupCount": 100
         }
