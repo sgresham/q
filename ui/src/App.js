@@ -1,7 +1,16 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import StreamedTextContainer from "./containers/StreamedTextContainer";
 
 function App() {
+  const stream = {
+    subscribe: (callback) => {
+      callback("Hello World");
+    },
+    unsubscribe: () => {
+      console.log("Unsubscribed");
+    },
+  };
   return (
     <div className="App">
       <header className="App-header">
@@ -17,7 +26,12 @@ function App() {
         >
           Learn React
         </a>
+        <div>
+        <h1>Streamed Text</h1>
+        <StreamedTextContainer stream={stream} />
+      </div>
       </header>
+
     </div>
   );
 }
