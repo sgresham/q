@@ -41,3 +41,31 @@
   font-size: 12px;
   text-align: left;
 }
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  width: 98%;
+  height: 1200px;
+}
+
+.streaming-text {
+  width: 100%;
+  max-height: 800px; /* Set maximum height */
+  overflow-y: scroll; /* Add vertical scrollbar when needed */
+}
+
+.transcript-container {
+  flex: 1;
+  flex-grow: 1;
+}
+
+.prompt-response { padding: 20px; }
+.llama-response { 
+  font-size: 14px;
+  /* add support for \n */
+  white-space: pre-wrap;
+
+  text-align: left;
+}

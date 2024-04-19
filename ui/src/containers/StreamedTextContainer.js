@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 // Function to format timestamp to hh:mm:ss format
 function formatTimestamp(timestamp) {
@@ -14,41 +14,57 @@ function formatTimestamp(timestamp) {
   return `${hours}:${minutes}:${seconds}`;
 }
 
-const StreamedTextContainer = () => {
+const StreamedTextContainer = ({ stream }) => {
   const [text, setText] = useState([]);
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8080");
+    if (stream) {
+      const ws = new WebSocket("ws://localhost:8080");
 
-    ws.onopen = () => {
-      console.log("Connected to server");
-    };
+      ws.onopen = () => {
+        console.log("Connected to server");
+      };
 
-    ws.onmessage = (event) => {
-      try {
-        const jsonData = JSON.parse(event.data);
-        setText((prevText) => [...prevText, jsonData]);
-      } catch (error) {
-        console.error("Error parsing JSON:", error);
-      }
-    };
+      ws.onmessage = (event) => {
+        console.log(event.data);
+        try {
+          const jsonData = JSON.parse(event.data);
+          if (Array.isArray(jsonData)) {
+            setText((prevText) => [...prevText, ...jsonData]);
+          } else {
+            setText((prevText) => [...prevText, jsonData]);
+          }
+          // scrollToBottom();
+        } catch (error) {
+          console.error("Error parsing JSON:", error);
+        }
+      };
 
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
+      ws.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
 
-    return () => {
-      ws.close();
-    };
-  }, []);
+      return () => {
+        ws.close();
+      };
+    }
+  }, [stream]);
+
+  // const scrollToBottom = () => {
+  //   messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  // };
 
   return (
-    <div>
-      {text.map((item, index) => (
-        <p key={index} className="transcript-paragraph">
-          {formatTimestamp(item.timestamp)}: {item.message}
-        </p>
-      ))}
+    <div className="streaming-text">
+      <div className="transcript-container">
+        {text.map((item, index) => (
+          <p key={index} className="transcript-paragraph">
+            {formatTimestamp(item.timestamp)}: {item.message}
+          </p>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
     </div>
   );
 };
