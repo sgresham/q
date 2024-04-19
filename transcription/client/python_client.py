@@ -10,7 +10,6 @@ FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 16000
 RECORD_SECONDS = 5
-WEBSOCKET_URI = 'ws://localhost:8765'
 CONNECT_TIMEOUT = 120  # Timeout in seconds
 
 # Parse the command line arguments
@@ -19,7 +18,7 @@ parser.add_argument("-d", "--device", default=0, help="input device number")
 parser.add_argument("-s", "--server", default="localhost", help="server IP address")
 parser.add_argument("-p", "--port", default=8765, help="port number")
 args = parser.parse_args()
-
+WEBSOCKET_URI = f'ws://{args.server}:{args.port}'
 # convert arg device from string to integer and error if it is not an integer and terminate the program
 try:
     device = int(args.device)
