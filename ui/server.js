@@ -78,8 +78,8 @@ function filterLogsByTimestampRange(filePath, startTime, endTime) {
     return messages;
 }
 
-const wss = new WebSocket.Server({ port: 8080 });
-console.log('Listening on port 8080');
+const wss = new WebSocket.Server({ port: 7080 });
+console.log('Listening on port 7080');
 
 let buffer = ''; // Initialize an empty buffer to store incomplete rows
 

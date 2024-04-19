@@ -20,7 +20,7 @@ const StreamedTextContainer = ({ stream }) => {
 
   useEffect(() => {
     if (stream) {
-      const ws = new WebSocket("ws://localhost:8080");
+      const ws = new WebSocket("ws://10.10.10.30:7080");
 
       ws.onopen = () => {
         console.log("Connected to server");

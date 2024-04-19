@@ -46,15 +46,17 @@ if torch.cuda.is_available():
     print("CUDA is available!")
     # Print the number of CUDA devices
     print("Number of CUDA devices:", torch.cuda.device_count())
+    device='cuda'
 else:
     print("CUDA is not available.")
+    device='cpu'
 
-HOST = 'localhost'
+HOST = '0.0.0.0'
 PORT = 8765
 SAMPLING_RATE = 16000
 AUDIO_CHANNELS = 1
 SAMPLES_WIDTH = 2 # int16
-DEBUG = False
+DEBUG = True
 VAD_AUTH_TOKEN = "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" # get your key here -> https://huggingface.co/pyannote/segmentation
 
 DEFAULT_CLIENT_CONFIG = {
@@ -74,7 +76,7 @@ vad_pipeline = VoiceActivityDetection(segmentation=model)
 vad_pipeline.instantiate({"onset": 0.5, "offset": 0.5, "min_duration_on": 0.3, "min_duration_off": 0.3})
 
 ## ---------- INSTANTIATES SPEECH --------
-recognition_pipeline = pipeline("automatic-speech-recognition", model="openai/whisper-large-v3", device='cuda')
+recognition_pipeline = pipeline("automatic-speech-recognition", model="openai/whisper-large-v3", device=device)
 
 
 connected_clients = {}
@@ -153,8 +155,10 @@ async def transcribe_and_send(client_id, websocket, new_audio_data):
         start_time_transcription = time.time()
         
         if client_configs[client_id]['language'] is not None:
+            logger.info('Ready to process boy')
             result = recognition_pipeline(file_name, generate_kwargs={"language": client_configs[client_id]['language']})
         else:
+            logger.info('Ready to process girl')
             result = recognition_pipeline(file_name)
 
         transcription_time = time.time() - start_time_transcription

@@ -63,11 +63,11 @@ async function watchFileAndBroadcast(filePath, wss) {
   }
 
 // Create a WebSocket server
-const wss = new WebSocket.Server({ port: 8080 }); // Change port as needed
+const wss = new WebSocket.Server({ port: 7080 }); // Change port as needed
 
 // WebSocket server listening event
 wss.on('listening', () => {
-    console.log('WebSocket server is listening on port 8080');
+    console.log('WebSocket server is listening on port 7080');
 });
 
 // WebSocket connection event
