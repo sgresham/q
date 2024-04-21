@@ -10,7 +10,6 @@ FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 16000
 RECORD_SECONDS = 5
-WEBSOCKET_URI = 'ws://localhost:8765'
 CONNECT_TIMEOUT = 120  # Timeout in seconds
 
 # Parse the command line arguments

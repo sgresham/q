@@ -1,7 +1,7 @@
 const fs = require('fs');
 const WebSocket = require('ws');
 
-const filePath = '../logs/q_core.json'; // Path to the JSON file
+const filePath = '../logs/q_transcript.json'; // Path to the JSON file
 
 // Function to read file and store as a variable
 function readJsonFile(filePath) {

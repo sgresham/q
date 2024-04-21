@@ -160,7 +160,7 @@ async def transcribe_and_send(client_id, websocket, new_audio_data):
         else:
             logger.info('Ready to process girl')
             result = recognition_pipeline(file_name)
-
+            # result = {}
         transcription_time = time.time() - start_time_transcription
         if DEBUG: print(f"Transcription Time: {transcription_time:.2f} seconds")
 
