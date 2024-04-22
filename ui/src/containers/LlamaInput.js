@@ -38,7 +38,7 @@ const LlamaInput = () => {
         messages: [{ role: "user", content: prompt }],
         stream: true,
         options: {
-          num_predict: 128,
+          num_predict: 8192,
           temperature: 0,
           num_ctx: 8192,
           repeat_penalty:1.1
