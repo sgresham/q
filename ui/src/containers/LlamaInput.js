@@ -65,6 +65,7 @@ const LlamaInput = () => {
           <MenuItem value="gemma:7b">Gemma7B</MenuItem>
           <MenuItem value="stablelm2">StableLM2</MenuItem>
           <MenuItem value="codellama:13b">CodeLlama13B</MenuItem>
+          <MenuItem value="llama3">Llama3</MenuItem>
         </Select>
       </FormControl>
       <TextField
