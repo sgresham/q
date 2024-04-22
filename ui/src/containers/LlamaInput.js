@@ -37,6 +37,12 @@ const LlamaInput = () => {
         model: model,
         messages: [{ role: "user", content: prompt }],
         stream: true,
+        options: {
+          num_predict: 128,
+          temperature: 0,
+          num_ctx: 8192,
+          repeat_penalty:1.1
+        },
       });
 
       for await (const stream of streamResponse) {

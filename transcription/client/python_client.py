@@ -3,6 +3,8 @@ import numpy as np
 import asyncio
 import websockets
 import argparse
+MAX_RETRIES = 3
+RETRY_DELAY = 5  # in seconds
 
 # Parameters
 CHUNK = 1024*5
@@ -63,15 +65,24 @@ async def send_audio(websocket):
         print(f"An error occurred: {e}")
 
 async def main():
-    try:
-        async with websockets.connect(WEBSOCKET_URI, ping_timeout=None) as websocket:
-            await send_audio(websocket)
-    except ConnectionRefusedError:
-        print(f"Could not connect to WebSocket server at {WEBSOCKET_URI}")
-    finally:
-        # Close the audio stream
-        stream.stop_stream()
-        stream.close()
-        p.terminate()
+    retries = 0
+    while retries < MAX_RETRIES:
+        try:
+            async with websockets.connect(WEBSOCKET_URI, ping_timeout=None) as websocket:
+                await send_audio(websocket)
+        except (ConnectionRefusedError, websockets.exceptions.ConnectionClosedError):
+            print(f"Connection failed. Retrying in {RETRY_DELAY} seconds...")
+            await asyncio.sleep(RETRY_DELAY)
+            retries += 1
+        else:
+            # If the connection and data transmission succeed, exit the loop
+            break
+    else:
+        print("Max retries reached. Could not establish connection.")
+
+    # Close the audio stream regardless of connection success or failure
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
 
 asyncio.run(main())
