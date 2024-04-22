@@ -62,7 +62,7 @@ VAD_AUTH_TOKEN = "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" # get your key here -> 
 DEFAULT_CLIENT_CONFIG = {
     "language" : None, # multilingual
     "chunk_length_seconds" : 5,
-    "chunk_offset_seconds" : 1
+    "chunk_offset_seconds" : 0.5
 }
 
 
