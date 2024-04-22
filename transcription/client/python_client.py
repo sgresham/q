@@ -19,6 +19,7 @@ parser.add_argument("-s", "--server", default="localhost", help="server IP addre
 parser.add_argument("-p", "--port", default=8765, help="port number")
 args = parser.parse_args()
 WEBSOCKET_URI = f'ws://{args.server}:{args.port}'
+
 # convert arg device from string to integer and error if it is not an integer and terminate the program
 try:
     device = int(args.device)
