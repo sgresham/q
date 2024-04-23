@@ -21,8 +21,9 @@ const MusicContainer = ({ stream }) => {
         try {
           const jsonData = JSON.parse(event.data);
           if (jsonData.length > 0) {
-            console.log("Received JSON:", jsonData[0].message);
-            setText(jsonData[0].message);
+            const updatedMessage = jsonData[0].message.toString().replace(/\'/gm, '"')
+            console.log("Received JSON:", JSON.parse(updatedMessage));
+            setText(JSON.parse(updatedMessage));
           }
         } catch (error) {
           console.error("Error parsing JSON:", error);
