@@ -32,6 +32,7 @@ sys.path.append(root_dir)
 # Create a logger
 logger = logging.getLogger('q_root')
 transcript = logging.getLogger('transcript')
+music = logging.getLogger('music')
 
 # Define the music recognition tool command and its arguments
 command = "songrec"
@@ -190,7 +191,7 @@ async def transcribe_and_send(client_id, websocket, new_audio_data):
             parsed_data = json.loads(result.stdout)
             # Get the "sections" part
             sections = parsed_data.get("track", {}).get("sections", [])
-            print(sections)
+            music.info(sections)
         except json.JSONDecodeError as e:
             print("Error decoding JSON:", e)
     else:

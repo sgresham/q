@@ -41,10 +41,19 @@
             "filename": "logs/q_transcript.json",
             "maxBytes": 10000000,
             "backupCount": 100
+        },
+        "music_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "DEBUG",
+            "formatter": "json",
+            "filename": "logs/q_music.json",
+            "maxBytes": 10000000,
+            "backupCount": 100
         }
     },
     "loggers": {
         "root": {"level": "DEBUG", "handlers": ["stdout", "file"]},
-        "transcript": {"level": "INFO", "handlers": ["stdout", "transcript_file"]}
+        "transcript": {"level": "INFO", "handlers": ["stdout", "transcript_file"]},
+        "music": {"level": "INFO", "handlers": ["stdout", "music_file"]}
     }
 }
