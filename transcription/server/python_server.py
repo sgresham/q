@@ -60,7 +60,7 @@ PORT = 8765
 SAMPLING_RATE = 16000
 AUDIO_CHANNELS = 1
 SAMPLES_WIDTH = 2 # int16
-DEBUG = True
+DEBUG = False
 VAD_AUTH_TOKEN = "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" # get your key here -> https://huggingface.co/pyannote/segmentation
 
 DEFAULT_CLIENT_CONFIG = {
