@@ -49,7 +49,7 @@ async function watchFileAndBroadcast(filePath, wss) {
       // Broadcast the new data to all WebSocket clients
       wss.clients.forEach((client) => {
         if (client.readyState === ws.OPEN) {
-          if (uniqueEntries) {
+          if (uniqueEntries.length > 0) {
             console.log("Sending new data to client:", client.id);
             client.send(JSON.stringify(uniqueEntries));
           }
