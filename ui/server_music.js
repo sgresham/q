@@ -34,28 +34,34 @@ function extractFields(jsonString) {
 }
 
 // Function to watch the file for updates and broadcast new data to all clients
-function watchFileAndBroadcast(filePath, wss) {
-    let data = []; // Store the current data in an array
+async function watchFileAndBroadcast(filePath, wss) {
+    let data = await readJsonFile(filePath);
     console.log('Listening for updates on file:', filePath);
   
-    setInterval(() => {
-        readJsonFile(filePath)
-            .then((newData) => {
-                
-                const uniqueEntries = newData.filter(entry => !data.some(existingEntry => existingEntry.timestamp === entry.timestamp)); // Filter out entries that already exist in the current data
-                
-                wss.clients.forEach((client) => {
-                    if (client.readyState === ws.OPEN) {
-                        console.log('Received new data:', JSON.stringify(uniqueEntries));
-                        client.send(JSON.stringify(uniqueEntries)); // Broadcast the new data to all WebSocket clients
-                    }
-                });
-  
-                data = [...data, ...uniqueEntries]; // Update the current data
-            })
-            .catch((error) => console.error('Error reading file:', error));
-    }, 1000); // Check every second for updates
-}
+    setInterval(async () => {
+        try {
+            // console.log('Checking for updates...');
+            const newData = await readJsonFile(filePath);
+      
+            // Filter out entries that already exist in the current data
+            const uniqueEntries = newData.filter(entry => !data.some(existingEntry => existingEntry.timestamp === entry.timestamp));
+            
+            // Broadcast the new data to all WebSocket clients
+            wss.clients.forEach(client => {
+              if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify(uniqueEntries));
+              }
+            });
+      
+            // Update the current data
+            data = [...data, ...uniqueEntries];
+          } catch (error) {
+            console.error('Error reading file:', error);
+          }
+        }, 1000); // Check every second for updates
+      
+        return data;
+      }
 
 // Create a WebSocket server and listen on port 7080 (change as needed)
 const wss = new ws.Server({ port: 7081 });
@@ -70,4 +76,5 @@ wss.on('connection', (ws) => {
 });
 
 // Watch the file for updates and broadcast new data to all clients
-watchFileAndBroadcast(filePath, wss);
+watchFileAndBroadcast(filePath, wss)
+    .catch(error => console.error('Error watching file and broadcasting data:', error));
