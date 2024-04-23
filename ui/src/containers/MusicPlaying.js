@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import Song from "../../components/Song"
+import Song from "../components/Song"
 
 const MusicContainer = ({ stream }) => {
   const [text, setText] = useState([]);
@@ -15,11 +15,7 @@ const MusicContainer = ({ stream }) => {
       ws.onmessage = (event) => {
         try {
           const jsonData = JSON.parse(event.data);
-          if (Array.isArray(jsonData)) {
-            setText(jsonData);
-          } else {
-            setText([jsonData]);
-          }
+          setText(jsonData);
         } catch (error) {
           console.error("Error parsing JSON:", error);
         }
@@ -37,9 +33,7 @@ const MusicContainer = ({ stream }) => {
   return (
     <div className="streaming-text">
       <div className="transcript-container">
-        {text.map((item, index) => (
-          <Song song={item}/>
-        ))}
+        <Song song={text}/>
       </div>
     </div>
   );
