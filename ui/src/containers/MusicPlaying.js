@@ -19,8 +19,7 @@ const MusicContainer = ({ stream }) => {
 
       ws.onmessage = (event) => {
         try {
-          console.log("[event]", event);
-          const jsonData = JSON.parse(event);
+          const jsonData = JSON.parse(event.data);
 
           setText(jsonData);
         } catch (error) {
