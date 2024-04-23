@@ -17,22 +17,6 @@ function readJsonFile(filePath) {
     });
 }
 
-// Function to extract fields from JSON string
-function extractFields(jsonString) {
-    try {
-        // Check if jsonString is not empty
-        if (!jsonString.trim()) {
-            return null;
-        }
-        const { message, timestamp } = JSON.parse(jsonString);
-        return { message, timestamp };
-    } catch (error) {
-        console.error('Error parsing JSON:', error);
-        console.error('In line:', jsonString.trim());
-        return null;
-    }
-}
-
 // Main function to periodically check the file for updates
 async function watchFileAndBroadcast(filePath, wss) {
     let data = await readJsonFile(filePath);

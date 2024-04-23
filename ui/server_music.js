@@ -17,22 +17,6 @@ function readJsonFile(filePath) {
     });
 }
 
-// Function to extract fields from JSON string
-function extractFields(jsonString) {
-    try {
-        // Check if jsonString is not empty
-        if (!jsonString.trim()) {
-            return null;
-        }
-        const { message, timestamp } = JSON.parse(jsonString);
-        return { message, timestamp };
-    } catch (error) {
-        console.error('Error parsing JSON:', error);
-        console.error('In line:', jsonString.trim());
-        return null;
-    }
-}
-
 // Function to watch the file for updates and broadcast new data to all clients
 async function watchFileAndBroadcast(filePath, wss) {
     let data = await readJsonFile(filePath);
@@ -45,7 +29,7 @@ async function watchFileAndBroadcast(filePath, wss) {
       
             // Filter out entries that already exist in the current data
             const uniqueEntries = newData.filter(entry => !data.some(existingEntry => existingEntry.timestamp === entry.timestamp));
-            
+            console.log('New data:', newData.length, 'unique entries:', uniqueEntries.length)
             // Broadcast the new data to all WebSocket clients
             wss.clients.forEach(client => {
               if (client.readyState === WebSocket.OPEN) {
