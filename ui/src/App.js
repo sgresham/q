@@ -1,6 +1,7 @@
 import "./App.css";
 import StreamedTextContainer from "./containers/StreamedTextContainer";
 import LlamaInput from "./containers/LlamaInput";
+import MusicContainer from "./containers/MusicPlaying";
 
 function App() {
   const stream = {
@@ -17,6 +18,9 @@ function App() {
         <div class="container">
           <section class="streaming-text">
             <StreamedTextContainer stream={stream} />
+          </section>
+          <section class="streaming-text">
+            <MusicContainer stream={stream} />
           </section>
           <section class="prompt-response">
             <LlamaInput />
