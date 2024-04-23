@@ -15,6 +15,7 @@ import logging
 import logging.config
 import torch
 import pathlib
+import subprocess
 
 from transformers import pipeline
 from pyannote.core import Segment
@@ -32,7 +33,9 @@ sys.path.append(root_dir)
 logger = logging.getLogger('q_root')
 transcript = logging.getLogger('transcript')
 
-
+# Define the music recognition tool command and its arguments
+command = "songrec"
+arguments = ["audio-file-to-recognized-song"]
 
 def setup_logging():
     config_file = pathlib.Path("log_config/config.json")
@@ -155,12 +158,9 @@ async def transcribe_and_send(client_id, websocket, new_audio_data):
         start_time_transcription = time.time()
         
         if client_configs[client_id]['language'] is not None:
-            logger.info('Ready to process boy')
             result = recognition_pipeline(file_name, generate_kwargs={"language": client_configs[client_id]['language']})
         else:
-            logger.info('Ready to process girl')
             result = recognition_pipeline(file_name)
-            # result = {}
         transcription_time = time.time() - start_time_transcription
         if DEBUG: print(f"Transcription Time: {transcription_time:.2f} seconds")
 
@@ -175,7 +175,21 @@ async def transcribe_and_send(client_id, websocket, new_audio_data):
         client_temp_buffers[client_id].extend(audio_data)
         if DEBUG: print(f"Skipping because {last_segment.end} falls after {(len(audio_data) / (SAMPLES_WIDTH * SAMPLING_RATE)) - int(client_configs[client_id]['chunk_offset_seconds'])}")
 
-    os.remove(file_name) # in the end always delete the created file
+    # lets check to see if there is any music playing that we want to recognize.
+
+    # Run the command using the subprocess module
+    loopArgs = arguments + [file_name]
+    result = subprocess.call(command, loopArgs)
+
+    # Check the return code of the process
+    if result.returncode == 0:
+        print("Command executed successfully")
+        print(result)
+    else:
+        print("Error executing command")
+
+    # in the end always delete the created file
+    os.remove(file_name) 
 
 async def receive_audio(websocket, path):
     client_id = str(uuid.uuid4())

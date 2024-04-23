@@ -1,18 +1,18 @@
-import pyaudio
-import numpy as np
 import asyncio
 import websockets
+import numpy as np
+from pyaudio import PyAudio, paInt16
 import argparse
-MAX_RETRIES = 3
-RETRY_DELAY = 5  # in seconds
 
 # Parameters
 CHUNK = 1024*5
-FORMAT = pyaudio.paInt16
+FORMAT = paInt16
 CHANNELS = 1
 RATE = 16000
 RECORD_SECONDS = 5
 CONNECT_TIMEOUT = 120  # Timeout in seconds
+MAX_RETRIES = 5000  # Maximum number of retries
+RETRY_DELAY = 5  # in seconds
 
 # Parse the command line arguments
 parser = argparse.ArgumentParser()
@@ -29,9 +29,8 @@ except ValueError:
     device = args.device
     raise ValueError("Invalid device number. Must be an integer.")
 
-
 # Open the microphone and set up the audio stream
-p = pyaudio.PyAudio()
+p = PyAudio()
 stream = p.open(format=FORMAT,
                 channels=CHANNELS,
                 rate=RATE,
@@ -66,18 +65,16 @@ async def send_audio(websocket):
 
 async def main():
     retries = 0
-    while retries < MAX_RETRIES:
+    while True:
         try:
             async with websockets.connect(WEBSOCKET_URI, ping_timeout=None) as websocket:
                 await send_audio(websocket)
-        except (ConnectionRefusedError, websockets.exceptions.ConnectionClosedError):
-            print(f"Connection failed. Retrying in {RETRY_DELAY} seconds...")
-            await asyncio.sleep(RETRY_DELAY)
-            retries += 1
+        except Exception:
+            pass
         else:
             # If the connection and data transmission succeed, exit the loop
             break
-    else:
+    if retries == MAX_RETRIES:
         print("Max retries reached. Could not establish connection.")
 
     # Close the audio stream regardless of connection success or failure
