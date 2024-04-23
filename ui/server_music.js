@@ -29,7 +29,7 @@ async function watchFileAndBroadcast(filePath, wss) {
       
             // Filter out entries that already exist in the current data
             const uniqueEntries = newData.filter(entry => !data.some(existingEntry => existingEntry.timestamp === entry.timestamp));
-            console.log('New data:', newData.length, 'unique entries:', uniqueEntries.length, 'entries:', newData)
+            console.log('New data:', newData.length, 'unique entries:', uniqueEntries.length, 'entries:', uniqueEntries)
             
             // Broadcast the new data to all WebSocket clients
             wss.clients.forEach(client => {
