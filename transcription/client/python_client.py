@@ -54,8 +54,13 @@ async def send_audio(websocket):
 
             # Transmit the current chunk of audio data to the WebSocket server with timeout
             await asyncio.wait_for(websocket.send(audio_data.tobytes()), timeout=CONNECT_TIMEOUT)
-    except Exception:
-            pass
+    except websockets.exceptions.ConnectionClosedError:
+        logging.error("WebSocket connection closed unexpectedly.")
+        # Handle the closed connection here (e.g., reconnect, cleanup, etc.)
+        # Optionally, you can raise the exception to ensure it's retrieved and handled by the caller
+        raise
+    except Exception as e:
+        logging.error("Error occurred in send_audio: %s", e)
 
 async def main():
     retries = 0
