@@ -180,19 +180,21 @@ async def transcribe_and_send(client_id, websocket, new_audio_data):
     # Run the command using the subprocess module
     loopArgs = arguments + [file_name]
     print("DEBUG: Running command: ", loopArgs)
-    result = subprocess.run([command] + loopArgs, bufsize=0)
-    # Parse the JSON data
-    parsed_data = json.loads(result.stdout)
-
-    # Get the "sections" part
-    sections = parsed_data.get("track", {}).get("sections", [])
+    result = subprocess.run([command] + loopArgs, bufsize=0, capture_output=True, text=True)
+   
 
     # Check the return code of the process
     if result.returncode == 0:
-        print("Command executed successfully")
-        print(sections)
+        try:
+            # Parse the JSON data
+            parsed_data = json.loads(result.stdout)
+            # Get the "sections" part
+            sections = parsed_data.get("track", {}).get("sections", [])
+            print(sections)
+        except json.JSONDecodeError as e:
+            print("Error decoding JSON:", e)
     else:
-        print("Error executing command")
+        print("Command failed with return code:", result.returncode)
 
     # in the end always delete the created file
     os.remove(file_name) 
