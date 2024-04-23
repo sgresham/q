@@ -33,6 +33,8 @@ sys.path.append(root_dir)
 logger = logging.getLogger('q_root')
 transcript = logging.getLogger('transcript')
 music = logging.getLogger('music')
+logging.getLogger("websockets").setLevel(logging.WARNING)  # Adjust the logger name as needed
+
 
 # Define the music recognition tool command and its arguments
 command = "songrec"
