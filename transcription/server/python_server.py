@@ -138,7 +138,7 @@ async def transcribe_and_send(client_id, websocket, new_audio_data):
 
     # Logging after VAD
     if DEBUG: print(f"Client ID {client_id}: VAD result segments count: {len(result)}")
-    print(f"Client ID {client_id}: VAD inference time: {vad_time:.2f}")
+    if DEBUG: print(f"Client ID {client_id}: VAD inference time: {vad_time:.2f}")
 
     if len(result) == 0: # this should happen just if there's no old audio data
         os.remove(file_name)
@@ -180,7 +180,7 @@ async def transcribe_and_send(client_id, websocket, new_audio_data):
 
     # Run the command using the subprocess module
     loopArgs = arguments + [file_name]
-    print("DEBUG: Running command: ", loopArgs)
+    if DEBUG: print("DEBUG: Running command: ", loopArgs)
     result = subprocess.run([command] + loopArgs, bufsize=0, capture_output=True, text=True)
    
 
@@ -206,7 +206,7 @@ async def receive_audio(websocket, path):
     client_buffers[client_id] = bytearray()
     client_configs[client_id] = DEFAULT_CLIENT_CONFIG
     
-    print(f"Client {client_id} connected")
+    if DEBUG: print(f"Client {client_id} connected")
 
     try:
         async for message in websocket:
@@ -216,10 +216,10 @@ async def receive_audio(websocket, path):
                 config = json.loads(message)
                 if config.get('type') == 'config':
                     client_configs[client_id] = config['data']
-                    print(f"Config for {client_id}: {client_configs[client_id]}")
+                    if DEBUG: print(f"Config for {client_id}: {client_configs[client_id]}")
                     continue
             else:
-                print(f"Unexpected message type from {client_id}")
+                if DEBUG: print(f"Unexpected message type from {client_id}")
 
             # Process audio when enough data is received
             if len(client_buffers[client_id]) > int(client_configs[client_id]['chunk_length_seconds']) * SAMPLING_RATE * SAMPLES_WIDTH:
@@ -228,7 +228,7 @@ async def receive_audio(websocket, path):
                 client_buffers[client_id].clear()
 
     except websockets.ConnectionClosed as e:
-        print(f"Connection with {client_id} closed: {e}")
+        if DEBUG: print(f"Connection with {client_id} closed: {e}")
     finally:
         del connected_clients[client_id]
         del client_buffers[client_id]
