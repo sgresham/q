@@ -179,13 +179,20 @@ async def transcribe_and_send(client_id, websocket, new_audio_data):
 
     # Run the command using the subprocess module
     loopArgs = arguments + [file_name]
-    print("DEBUG: Running command: " + command)
-    result = subprocess.call(command, loopArgs)
+    print("DEBUG: Running command: ", loopArgs)
+    result = subprocess.run([command] + loopArgs, bufsize=0)
+    # Parse the JSON data
+    parsed_data = json.loads(result)
+
+    # Get the "sections" part
+    sections = parsed_data.get("track", {}).get("sections", [])
+
+
 
     # Check the return code of the process
     if result.returncode == 0:
         print("Command executed successfully")
-        print(result)
+        print(sections)
     else:
         print("Error executing command")
 
