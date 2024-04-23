@@ -27,7 +27,6 @@ const StreamedTextContainer = ({ stream }) => {
       };
 
       ws.onmessage = (event) => {
-        console.log(event.data);
         try {
           const jsonData = JSON.parse(event.data);
           if (Array.isArray(jsonData)) {
