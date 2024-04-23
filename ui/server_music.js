@@ -41,11 +41,12 @@ function watchFileAndBroadcast(filePath, wss) {
     setInterval(() => {
         readJsonFile(filePath)
             .then((newData) => {
-                console.log('Received new data:', newData);
+                
                 const uniqueEntries = newData.filter(entry => !data.some(existingEntry => existingEntry.timestamp === entry.timestamp)); // Filter out entries that already exist in the current data
                 
                 wss.clients.forEach((client) => {
                     if (client.readyState === ws.OPEN) {
+                        console.log('Received new data:', JSON.stringify(uniqueEntries));
                         client.send(JSON.stringify(uniqueEntries)); // Broadcast the new data to all WebSocket clients
                     }
                 });
