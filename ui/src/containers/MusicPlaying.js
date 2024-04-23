@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Song from "../components/Song"
 
 const MusicContainer = ({ stream }) => {
-  const [text, setText] = useState({});
+  const [text, setText] = useState({metadata: [], metapages: [], tabname: 'Tab Name', type: ''})
 
   useEffect(() => {
     if (stream) {
@@ -15,7 +15,7 @@ const MusicContainer = ({ stream }) => {
       ws.onmessage = (event) => {
         try {
           const jsonData = JSON.parse(event.data);
-          console.log(jsonData);
+          console.log(event);
           setText(jsonData);
         } catch (error) {
           console.error("Error parsing JSON:", error);

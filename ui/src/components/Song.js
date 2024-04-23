@@ -9,12 +9,12 @@ const Song = ({ song }) => {
     <div className="song">
       <h2>{tabname}</h2>
       <ul>
-        {metadata.map((item) => (
+        {metadata?.map((item) => (
           <li key={item.title}>{item.text}</li>
         ))}
       </ul>
       <Ticker speed={10000}>
-        {metapages.map((page, index) => (
+        {metapages?.map((page, index) => (
           <div className="ticker-page" key={index}>
             {page.caption && <h3>{page.caption}</h3>}
             {page.image && <img src={page.image} alt="" />}
