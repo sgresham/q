@@ -36,10 +36,12 @@ function extractFields(jsonString) {
 // Function to watch the file for updates and broadcast new data to all clients
 function watchFileAndBroadcast(filePath, wss) {
     let data = []; // Store the current data in an array
+    console.log('Listening for updates on file:', filePath);
   
     setInterval(() => {
         readJsonFile(filePath)
             .then((newData) => {
+                console.log('Received new data:', newData);
                 const uniqueEntries = newData.filter(entry => !data.some(existingEntry => existingEntry.timestamp === entry.timestamp)); // Filter out entries that already exist in the current data
                 
                 wss.clients.forEach((client) => {
