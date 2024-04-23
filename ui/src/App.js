@@ -14,13 +14,11 @@ function App() {
   };
   return (
     <div className="App">
+      <MusicContainer stream={stream} />
       <div>
         <div class="container">
           <section class="streaming-text">
             <StreamedTextContainer stream={stream} />
-          </section>
-          <section class="streaming-text">
-            <MusicContainer stream={stream} />
           </section>
           <section class="prompt-response">
             <LlamaInput />

@@ -1,22 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-
-// Function to format timestamp to hh:mm:ss format
-function formatTimestamp(timestamp) {
-  // Convert timestamp string to Date object
-  const date = new Date(timestamp);
-
-  // Extract hours, minutes, and seconds
-  const hours = date.getHours().toString().padStart(2, "0");
-  const minutes = date.getMinutes().toString().padStart(2, "0");
-  const seconds = date.getSeconds().toString().padStart(2, "0");
-
-  // Format time in hh:mm:ss format
-  return `${hours}:${minutes}:${seconds}`;
-}
+import Song from "../../components/Song"
 
 const MusicContainer = ({ stream }) => {
   const [text, setText] = useState([]);
-  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     if (stream) {
@@ -27,13 +13,12 @@ const MusicContainer = ({ stream }) => {
       };
 
       ws.onmessage = (event) => {
-        console.log(event.data);
         try {
           const jsonData = JSON.parse(event.data);
           if (Array.isArray(jsonData)) {
-            setText((prevText) => [...prevText, ...jsonData]);
+            setText(jsonData);
           } else {
-            setText((prevText) => [...prevText, jsonData]);
+            setText([jsonData]);
           }
         } catch (error) {
           console.error("Error parsing JSON:", error);
@@ -53,11 +38,8 @@ const MusicContainer = ({ stream }) => {
     <div className="streaming-text">
       <div className="transcript-container">
         {text.map((item, index) => (
-          <p key={index} className="transcript-paragraph">
-            {formatTimestamp(item.timestamp)}: {item.message}
-          </p>
+          <Song song={item}/>
         ))}
-        <div ref={messagesEndRef} />
       </div>
     </div>
   );
