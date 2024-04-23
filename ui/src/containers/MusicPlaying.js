@@ -20,8 +20,10 @@ const MusicContainer = ({ stream }) => {
       ws.onmessage = (event) => {
         try {
           const jsonData = JSON.parse(event.data);
-
-          setText(jsonData);
+          if (jsonData.length > 0) {
+            console.log("Received JSON:", jsonData[0].message);
+            setText(jsonData[0].message);
+          }
         } catch (error) {
           console.error("Error parsing JSON:", error);
         }
