@@ -1,7 +1,7 @@
 const fs = require('fs');
 const ws = require('ws'); // Import the WebSocket module
 
-const filePath = '../logs/q_transcript.json'; // Path to the JSON file
+const filePath = '../logs/q_music.json'; // Path to the JSON file
 
 // Function to read file and store as a variable
 function readJsonFile(filePath) {
