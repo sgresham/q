@@ -193,6 +193,7 @@ async def transcribe_and_send(client_id, websocket, new_audio_data):
             parsed_data = json.loads(result.stdout)
             # Get the "sections" part
             sections = parsed_data.get("track", {}).get("sections", [])
+            print('{SECTION DEBUG}: ',sections)
             music.info(sections)
         except json.JSONDecodeError as e:
             print("Error decoding JSON:", e)

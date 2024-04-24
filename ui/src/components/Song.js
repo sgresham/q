@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  Typography,
-} from "@mui/material";
+import { Card, CardContent, Typography, Grid } from "@mui/material";
 
 const Song = ({ song }) => {
   // Check if song is undefined
@@ -12,43 +8,57 @@ const Song = ({ song }) => {
     return null; // or return a placeholder component/message as needed
   }
 
-  console.log("[song]", song);
-
   // Extract the first object from the song array
   const objsong = song[0];
-  console.log('[objsong]',objsong);
 
   // Check if objsong is undefined (this check might not be necessary if you're sure song[0] is always defined)
   if (!objsong) {
-    console.log("First song object is undefined");
     return null; // or handle this case accordingly
   }
+  console.log("[OBJSONG]: ", objsong);
 
   // Destructure properties from the first object (objsong)
-  const { metadata, metapages, tabname, type } = objsong;
-  console.log("[metadata]", metadata);
+  const { metadata, metapages } = objsong;
+  let albumDetails = {
+    album: metadata[0].text,
+    Label: metadata[1].text,
+    release: metadata[2].text,
+  };
+  let songDetails = {
+    artist: metapages[0].caption,
+    artist_img: metapages[0].image,
+    song_name: metapages[1].caption,
+    song_img: metapages[1].image,
+  };
+
   return (
     <div className="song">
-      <h2>{tabname}</h2>
-      <ul>
-        {metadata?.map((item) => (
-          <li key={item.title}>{item.text}</li>
-        ))}
-        <Card>
-          <CardContent>
+      <Grid container spacing={2}>
+        <Grid item xs={6} sm={6} md={4} lg={3} xl={2}>
+          <Card>
             <Typography class="llama-response" variant="body1" component="div">
-              {metapages?.map((page, index) => (
-                <div className="ticker-page" key={index}>
-                  {page.caption && <h3>{page.caption}</h3>}
-                  {page.image && <img src={page.image} alt="" />}
-                  {page.url && <a href={page.url}>{page.url}</a>}
-                </div>
-              ))}
+              <p>Album: {albumDetails.album}</p>
+              <p>Label: {albumDetails.Label}</p>
+              <p>Release Year: {albumDetails.release}</p>
             </Typography>
-          </CardContent>
-        </Card>
-        ;
-      </ul>
+          </Card>
+        </Grid>
+        <Grid item xs={6} sm={6} md={8} lg={9} xl={10}>
+          <Card>
+            <CardContent>
+              <Typography
+                class="llama-response"
+                variant="body1"
+                component="div"
+              >
+                <p>Artist: {songDetails.artist}</p>
+                <p>Song Name: {songDetails.song_name}</p>
+                <img class="song-image" src={songDetails.artist_img}></img>
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
     </div>
   );
 };

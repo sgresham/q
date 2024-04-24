@@ -70,3 +70,7 @@
   text-align: left;
 }
 
+.song-image {
+  max-height: 100px;
+  max-width: 100px ;
+}

@@ -21,9 +21,13 @@ const MusicContainer = ({ stream }) => {
         try {
           const jsonData = JSON.parse(event.data);
           if (jsonData.length > 0) {
-            const updatedMessage = jsonData[0].message.toString().replace(/\'/gm, '"')
-            console.log("Received JSON:", JSON.parse(updatedMessage));
-            setText(JSON.parse(updatedMessage));
+            const updatedMessage = jsonData[0].message
+              .toString()
+              .replace(/\'/gm, '"');
+            if (JSON.parse(updatedMessage).length > 0) {
+              console.log("Received JSON:", JSON.parse(updatedMessage));
+              setText(JSON.parse(updatedMessage));
+            }
           }
         } catch (error) {
           console.error("Error parsing JSON:", error);
