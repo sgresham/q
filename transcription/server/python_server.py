@@ -190,6 +190,7 @@ async def transcribe_and_send(client_id, websocket, new_audio_data):
     if result.returncode == 0:
         try:
             # Parse the JSON data
+            print('{dirty DEBUG}: ',result.stdout)
             parsed_data = json.loads(result.stdout)
             # Get the "sections" part
             sections = parsed_data.get("track", {}).get("sections", [])
