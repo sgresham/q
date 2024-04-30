@@ -20,7 +20,7 @@ class TextToSpeech extends React.Component {
   }
 
   componentDidMount() {
-    const url = `http://localhost:8000/tts?text=${encodeURIComponent(this.state.text)}`;
+    const url = `http://10.10.10.30:7095/tts?text=${encodeURIComponent(this.state.text)}`;
     fetch(url).then(response => response.blob())
       .then(audioBlob => {
         const audioUrl = URL.createObjectURL(audioBlob);

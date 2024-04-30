@@ -33,13 +33,13 @@ import wave
 import io
 import os
 
-PORT = int(os.environ.get("TTS_FASTAPI_PORT", 8000))
+PORT = int(os.environ.get("TTS_FASTAPI_PORT", 7095))
 
 SUPPORTED_ENGINES = [
     #"azure",
     #"openai",
     #"elevenlabs",
-    "system",
+    # "system",
     "coqui",  # comment coqui out for tests where you need server start often
 ]
 
