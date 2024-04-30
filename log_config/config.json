@@ -27,28 +27,31 @@
             "stream": "ext://sys.stdout"
         },
         "file": {
-            "class": "logging.handlers.RotatingFileHandler",
+            "class": "logging.handlers.TimedRotatingFileHandler",
             "level": "DEBUG",
             "formatter": "json",
             "filename": "logs/q_core.json",
-            "maxBytes": 10000000,
-            "backupCount": 100
+            "when": "midnight",
+            "interval": 1,
+            "backupCount": 1000
         },
         "transcript_file": {
-            "class": "logging.handlers.RotatingFileHandler",
+            "class": "logging.handlers.TimedRotatingFileHandler",
             "level": "DEBUG",
             "formatter": "json",
             "filename": "logs/q_transcript.json",
-            "maxBytes": 10000000,
-            "backupCount": 100
+            "when": "midnight",
+            "interval": 1,
+            "backupCount": 1000
         },
         "music_file": {
-            "class": "logging.handlers.RotatingFileHandler",
+            "class": "logging.handlers.TimedRotatingFileHandler",
             "level": "DEBUG",
             "formatter": "json",
             "filename": "logs/q_music.json",
-            "maxBytes": 10000000,
-            "backupCount": 100
+            "when": "midnight",
+            "interval": 1,
+            "backupCount": 1000
         }
     },
     "loggers": {
