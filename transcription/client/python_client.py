@@ -3,9 +3,10 @@ import websockets
 import numpy as np
 from pyaudio import PyAudio, paInt16
 import argparse
+import logging
 
 # Parameters
-CHUNK = 1024*5
+CHUNK = 1024 * 5
 FORMAT = paInt16
 CHANNELS = 1
 RATE = 16000
@@ -35,7 +36,7 @@ stream = p.open(format=FORMAT,
                 channels=CHANNELS,
                 rate=RATE,
                 input=True,
-                frames_per_buffer=CHUNK,
+                frames_per_buffer=CHUNK * 20,
                 input_device_index=device)
 
 print("Recording...")
@@ -62,12 +63,25 @@ async def send_audio(websocket):
     except Exception as e:
         logging.error("Error occurred in send_audio: %s", e)
 
+async def receive_response(websocket):
+    try:
+        async for message in websocket:
+            # Handle received messages here
+            print("Received message:", message)
+    except websockets.exceptions.ConnectionClosedError:
+        logging.error("WebSocket connection closed unexpectedly.")
+        # Handle the closed connection here (e.g., reconnect, cleanup, etc.)
+        # Optionally, you can raise the exception to ensure it's retrieved and handled by the caller
+        raise
+    except Exception as e:
+        logging.error("Error occurred in receive_response: %s", e)
+
 async def main():
     retries = 0
     while True:
         try:
             async with websockets.connect(WEBSOCKET_URI, ping_timeout=None) as websocket:
-                await send_audio(websocket)
+                await asyncio.gather(send_audio(websocket), receive_response(websocket))
         except Exception:
             pass
         else:

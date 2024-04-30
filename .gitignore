@@ -2,6 +2,7 @@ logs
 node_modules
 .python-version
 audio_files/
+models/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
