@@ -1,7 +1,7 @@
 import requests
 import pyaudio
 
-text_to_tts = "The conversation is between Tracy and Steve, who are discussing a suspicious email that Tracy received. Tracy is nervous and unsure about what to do with the email, which appears to be trying to gather information about her browsing history. Steve is helping Tracy understand how to view her browser history on her computer and sharing his screen to show her how to do it.Tracy is concerned that someone may be trying to hack into her computer or gather personal information from her browsing history. She mentions that she was looking at buying a dog online around the time of the suspicious email, which makes her think that maybe someone is trying to gather more information about her Steve reassures Tracy that it's likely just a legitimate IT issue and not necessarily malicious. He suggests taking a screenshot of the browser history and sending it to the cyber team for further investigation. Tracy agrees and thanks Steve for his help. The conversation ends with Tracy feeling relieved and grateful for Steve's assistance"
+text_to_tts = ""
 
 # Configuration
 SERVER_URL = "http://localhost:8000/tts"

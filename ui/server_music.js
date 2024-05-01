@@ -27,7 +27,6 @@ async function watchFileAndBroadcast(filePath, wss) {
 
   setInterval(async () => {
     try {
-      // console.log('Checking for updates...');
       const newData = await readJsonFile(filePath);
 
       // Filter out entries that already exist in the current data
@@ -37,20 +36,21 @@ async function watchFileAndBroadcast(filePath, wss) {
             (existingEntry) => existingEntry.timestamp === entry.timestamp
           )
       );
-      console.log(
-        "New data:",
-        newData.length,
-        "unique entries:",
-        uniqueEntries.length,
-        "entries:",
-        uniqueEntries
-      );
+      // console.log(
+      //   "New data:",
+      //   newData.length,
+      //   "unique entries:",
+      //   uniqueEntries.length,
+      //   "entries:",
+      //   uniqueEntries
+      // );
 
       // Broadcast the new data to all WebSocket clients
       wss.clients.forEach((client) => {
         if (client.readyState === ws.OPEN) {
           if (uniqueEntries.length > 0) {
             console.log("Sending new data to client:", client.id);
+            console.log("Sending new data to client:", uniqueEntries);
             client.send(JSON.stringify(uniqueEntries));
           }
         }

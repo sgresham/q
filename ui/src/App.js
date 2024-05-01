@@ -2,7 +2,6 @@ import "./App.css";
 import StreamedTextContainer from "./containers/StreamedTextContainer";
 import LlamaInput from "./containers/LlamaInput";
 import MusicContainer from "./containers/MusicPlaying";
-import TextToSpeech from "./components/tts";
 
 function App() {
   const stream = {
@@ -25,7 +24,6 @@ function App() {
             <LlamaInput />
           </section>{" "}
         </div>
-        <TextToSpeech />
       </div>
     </div>
   );

@@ -12,6 +12,8 @@ import {
   InputLabel,
 } from "@mui/material";
 import { Ollama } from "ollama/browser";
+import TextToSpeech from "../components/stream";
+import TextToSpeechStream from "../components/streamFunction";
 
 const ollama = new Ollama({ host: "http://10.10.10.30:11434" });
 
@@ -19,7 +21,8 @@ const LlamaInput = () => {
   const [prompt, setPrompt] = useState("");
   const [response, setResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [model, setModel] = useState("llama2");
+  const [model, setModel] = useState("llama3");
+  const [stream, setStream] = useState(false);
 
   const handleInputChange = (event) => {
     setPrompt(event.target.value);
@@ -36,17 +39,35 @@ const LlamaInput = () => {
       const streamResponse = await ollama.chat({
         model: model,
         messages: [{ role: "user", content: prompt }],
-        stream: true,
+        stream: stream,
         options: {
           num_predict: 8192,
           temperature: 0,
           num_ctx: 8192,
-          repeat_penalty:1.1
+          repeat_penalty: 1.1,
         },
       });
-
-      for await (const stream of streamResponse) {
-        setResponse((prevResponse) => prevResponse + stream.message.content);
+      if (stream) {
+        for await (const stream of streamResponse) {
+          setResponse((prevResponse) => prevResponse + stream.message.content);
+          TextToSpeechStream(stream.message.content).then((audio) => audio.play())
+        }
+      } else {
+        setResponse(
+          (prevResponse) => prevResponse + streamResponse.message.content
+        );
+        TextToSpeechStream(streamResponse.message.content).then((audio) => {
+          console.log("data received")
+          if (audio.readyState >= 2) { // 2 means audio data is available and ready to play
+            console.log("data ready")
+              audio.play();
+          } else {
+              audio.addEventListener('loadeddata', () => {
+                console.log("data loaded")
+                  audio.play();
+              });
+          }
+      });
       }
     } catch (error) {
       console.error("Error fetching response from llama2:", error);
@@ -74,6 +95,7 @@ const LlamaInput = () => {
           <MenuItem value="llama3">Llama3</MenuItem>
         </Select>
       </FormControl>
+                  <TextToSpeech text={response} />
       <TextField
         label="Enter prompt..."
         variant="outlined"
@@ -81,7 +103,6 @@ const LlamaInput = () => {
         onChange={handleInputChange}
         multiline
         rows={4}
-
         fullWidth
         inputProps={{ style: { fontSize: "12px" } }}
       />
@@ -96,7 +117,9 @@ const LlamaInput = () => {
       {response && (
         <Card>
           <CardContent>
-          <Typography class="llama-response"variant="body1" component="div">{response.trim()}</Typography>
+            <Typography class="llama-response" variant="body1" component="div">
+              {response.trim()}
+            </Typography>
           </CardContent>
         </Card>
       )}
