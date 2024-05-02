@@ -20,16 +20,11 @@ const MusicContainer = ({ stream }) => {
       ws.onmessage = (event) => {
         try {
           const jsonData = JSON.parse(event.data);
-          // console.log("got data")
-          // console.log('[jsondata]', jsonData)
           if (jsonData.length > 0) {
-            // console.log("real data?", jsonData)
             const updatedMessage = JSON.parse(jsonData[0].message)
-            // console.log("this data", Object.keys(updatedMessage))
             if (updatedMessage.track) {
-                // console.log('[updatedMessage]',updatedMessage)
-
-                setText(updatedMessage.track.sections);
+              console.log(updatedMessage.track.sections)
+                setText(updatedMessage.track);
             }
           }
         } catch (error) {

@@ -18,7 +18,7 @@ const Song = ({ song }) => {
   console.log("[OBJSONG]: ", objsong);
 
   // Destructure properties from the first object (objsong)
-  const { metadata, metapages } = objsong;
+  const { metadata, metapages } = objsong.sections;
   let albumDetails = {
     album: metadata[0].text,
     Label: metadata[1].text,

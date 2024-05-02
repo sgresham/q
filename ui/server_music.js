@@ -36,27 +36,20 @@ async function watchFileAndBroadcast(filePath, wss) {
             (existingEntry) => existingEntry.timestamp === entry.timestamp
           )
       );
-      // console.log(
-      //   "New data:",
-      //   newData.length,
-      //   "unique entries:",
-      //   uniqueEntries.length,
-      //   "entries:",
-      //   uniqueEntries
-      // );
 
       // Broadcast the new data to all WebSocket clients
       wss.clients.forEach((client) => {
         if (client.readyState === ws.OPEN) {
           if (uniqueEntries.length > 0) {
             console.log("Sending new data to client:", client.id);
-            songData = JSON.parse(uniqueEntries[0].message)
-            var trackartist =
-            songData.track.urlparams;
+            songData = JSON.parse(uniqueEntries[0].message);
+            var trackartist = songData.track.urlparams;
             // Printing trackartist and tracktitle
-            console.log("Track Artist:", trackartist);
-            if (trackartist)
+
+            if (trackartist) {
+              console.log("Track Artist:", trackartist);
               client.send(JSON.stringify(uniqueEntries));
+            }
           }
         }
       });
