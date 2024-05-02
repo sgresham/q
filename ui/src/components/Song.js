@@ -9,16 +9,16 @@ const Song = ({ song }) => {
   }
 
   // Extract the first object from the song array
-  const objsong = song[0];
+  console.log("[song]", song);
 
-  // Check if objsong is undefined (this check might not be necessary if you're sure song[0] is always defined)
-  if (!objsong) {
-    return null; // or handle this case accordingly
+  if (!song.sections) {
+    song.sections = [{
+      metadata: [{ text: "NA" }, { text: "NA" }, { text: "NA" }],
+      metapages: [{caption: "NA", image: "NA"},{caption: "NA", image: "NA"}]
+    }];
   }
-  console.log("[OBJSONG]: ", objsong);
 
-  // Destructure properties from the first object (objsong)
-  const { metadata, metapages } = objsong.sections;
+  const { metadata, metapages } = song.sections[0];
   let albumDetails = {
     album: metadata[0].text,
     Label: metadata[1].text,

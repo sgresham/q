@@ -23,7 +23,6 @@ const MusicContainer = ({ stream }) => {
           if (jsonData.length > 0) {
             const updatedMessage = JSON.parse(jsonData[0].message)
             if (updatedMessage.track) {
-              console.log(updatedMessage.track.sections)
                 setText(updatedMessage.track);
             }
           }
