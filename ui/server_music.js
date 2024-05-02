@@ -47,11 +47,11 @@ async function watchFileAndBroadcast(filePath, wss) {
             console.log(trackartist)
             // Printing trackartist and tracktitle
 
-            if (trackartist.length > 0) {
+            if (Object.keys(trackartist).length > 0) {
               console.log("Sending new data to client:", client.id);
               console.log("Track Artist:", trackartist);
               client.send(JSON.stringify(uniqueEntries));
-            }
+          }
           }
         }
       });
