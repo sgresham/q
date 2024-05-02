@@ -50,6 +50,7 @@ async function watchFileAndBroadcast(filePath, wss) {
         if (client.readyState === ws.OPEN) {
           if (uniqueEntries.length > 0) {
             console.log("Sending new data to client:", client.id);
+            console.log("raw", uniqueEntries[0])
             var trackartist =
               uniqueEntries[0]["message"]["track"]["urlparams"][
                 "{trackartist}"
