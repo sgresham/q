@@ -43,7 +43,7 @@ async function watchFileAndBroadcast(filePath, wss) {
           if (uniqueEntries.length > 0) {
             console.log("Sending new data to client:", client.id);
             songData = JSON.parse(uniqueEntries[0].message);
-            var trackartist = songData?.track?.urlparams;
+            var trackartist = songData?.track?.urlparams ?? [];
             // Printing trackartist and tracktitle
 
             if (trackartist) {
