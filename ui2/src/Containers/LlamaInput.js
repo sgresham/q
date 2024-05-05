@@ -5,6 +5,8 @@ import SyntaxHighlighter from "react-syntax-highlighter";
 
 import models from "../Components/llm/modelList"
 import promptHelpers from "../Components/llm/modelHelpers";
+import RenderSegments from "../Components/RenderSegments";
+import ConversationHistory from "../Components/ConversationHistory";
 
 const ollama = new Ollama({ host: "http://10.10.10.30:11434" });
 
@@ -19,8 +21,6 @@ const LlamaInput = () => {
   const [promptHelper, setPromptHelper] = useState(
     "Answer truthfully and to the best of your ability"
   );
-
-
 
   const handleInputChange = (event) => {
     setPrompt(event.target.value);
@@ -40,36 +40,6 @@ const LlamaInput = () => {
     setPrompt("");
   };
 
-  function extractSegmentsFromResponse(response) {
-    const segments = [];
-    const codeRegex = /```(?:\w+)?\n([\s\S]*?)\n```/g; // Regular expression to match code blocks globally
-    let lastIndex = 0;
-
-    response.replace(codeRegex, (match, codeContent, codeMatchIndex) => {
-      // Extract text segment before code block
-      const textSegment = response.substring(lastIndex, codeMatchIndex);
-      if (textSegment.trim() !== "") {
-        segments.push({ type: "text", content: textSegment });
-      }
-
-      // Extract code block content
-      const codeSegment = codeContent;
-      segments.push({ type: "code", content: codeSegment });
-
-      lastIndex = codeMatchIndex + match.length; // Update lastIndex
-
-      return match; // Return matched code block for replacement
-    });
-
-    // Extract text segment after last code block
-    const lastTextSegment = response.substring(lastIndex);
-    if (lastTextSegment.trim() !== "") {
-      segments.push({ type: "text", content: lastTextSegment });
-    }
-    console.log('[segments]', segments);
-    return segments;
-  }
-
   const handleSubmit = async () => {
     let messages = []
     setIsLoading(true);
@@ -79,9 +49,7 @@ const LlamaInput = () => {
         { role: "system", content: promptHelper },
         { role: "user", content: prompt },
       ];
-    else messages = [...conversationHistory, {role:"user", content: prompt}]
-
-    console.log('[MESSAGES]', messages)
+    else messages = [...conversationHistory, { role: "user", content: prompt }]
     try {
       const streamResponse = await ollama.chat({
         model: model,
@@ -107,25 +75,18 @@ const LlamaInput = () => {
         }
       ]
 
-      const processed_data = extractSegmentsFromResponse(
-        streamResponse.message.content
-      );
       // Add the current conversation to history
       setConversationHistory([
         ...conversationHistory,
         ...interaction
       ]);
-      console.log('[interaction]', interaction)
       if (audio)
         TextToSpeechStream(streamResponse.message.content).then((audio) => {
-          console.log("data received");
+          ;
           if (audio.readyState >= 2) {
-            // 2 means audio data is available and ready to play
-            console.log("data ready");
             audio.play();
           } else {
             audio.addEventListener("loadeddata", () => {
-              console.log("data loaded");
               audio.play();
             });
           }
@@ -138,62 +99,35 @@ const LlamaInput = () => {
     }
   };
 
-  const CodeBlock = ({ language, children }) => {
-    return (
-      <SyntaxHighlighter language={language}>{children}</SyntaxHighlighter>
-    );
-  };
-
   return (
     <div className="w-full max-w-3xl mx-auto">
       {/* Render previous conversations */}
-      {conversationHistory.map((conversation, index) => (
-        <div key={index} className="mb-4">
-          <div className="bg-white p-4 rounded-lg shadow-md">
-            <div>
-              <p className="text-lg font-bold">{conversation.role}</p>
-            </div>
-              <div>
-                <p className="text-lg font-bold">{conversation.content}</p>
-              </div>
-          </div>
+      <ConversationHistory conversationHistory={conversationHistory} />
+      <div className="flex flex-wrap mb-4">
+        {/* Model select */}
+        <div className="w-full md:w-1/3 mb-4 md:mb-0 md:mr-2">
+          <label htmlFor="model" className="block mb-1">Model</label>
+          <select id="model" className="border border-gray-300 rounded-lg p-2 w-full" value={model} onChange={handleModelChange}>
+            {models.map((model, index) => (<option key={index} value={model.value}>{model.name}</option>))}
+          </select>
         </div>
-      ))}
-      {/* Clear conversations button */}
-      {conversationHistory.length > 0 && (
-        <button
-          className="bg-red-500 text-white px-4 py-2 rounded-lg mb-4"
-          onClick={handleClearHistory}
-        >
-          Clear Conversations
-        </button>
-      )}
-      {/* Current prompt input */}
-      <div className="mb-4">
-        <label htmlFor="model" className="block mb-1">Model</label>
-        <select
-          id="model"
-          className="border border-gray-300 rounded-lg p-2"
-          value={model}
-          onChange={handleModelChange}
-        >
-          {models.map((model, index) => (
-            <option key={index} value={model.value}>{model.name}</option>
-          ))}
-        </select>
-      </div>
-      <div className="mb-4">
-        <label htmlFor="promptHelper" className="block mb-1">Assistant</label>
-        <select
-          id="promptHelper"
-          className="border border-gray-300 rounded-lg p-2"
-          value={promptHelper}
-          onChange={handlePromptHelperChange}
-        >
-          {promptHelpers.map((helper, index) => (
-            <option key={index} value={helper.prompt}>{helper.name}</option>
-          ))}
-        </select>
+
+        {/* Assistant select */}
+        <div className="w-full md:w-1/3 mb-4 md:mb-0 md:mx-2">
+          <label htmlFor="promptHelper" className="block mb-1">Assistant</label>
+          <select id="promptHelper" className="border border-gray-300 rounded-lg p-2 w-full" value={promptHelper} onChange={handlePromptHelperChange}>
+            {promptHelpers.map((helper, index) => (<option key={index} value={helper.prompt}>{helper.name}</option>))}
+          </select>
+        </div>
+
+        {/* Clear conversations button */}
+        <div className="w-full md:w-1/3">
+          {conversationHistory.length > 0 && (
+            <button className="bg-red-500 text-white px-4 py-2 rounded-lg w-full" onClick={handleClearHistory}>
+              Clear Conversations
+            </button>
+          )}
+        </div>
       </div>
       <textarea
         className="border border-gray-300 rounded-lg p-2 mb-4 w-full"
