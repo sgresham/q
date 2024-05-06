@@ -1,6 +1,6 @@
 import React from "react";
 import LlamaInput from "./LlamaInput";
-import StreamedTextContainer from "./Transcription";
+import Transcription from "./Transcription";
 
 const MainContent = (stream) => {
   return (
@@ -17,7 +17,7 @@ const MainContent = (stream) => {
         {/* Right section */}
         <div className="w-1/2 overflow-y-auto bg-gray-300">
           <h2 className="text-lg font-bold p-4">Transcript Central</h2>
-          {/*<StreamedTextContainer stream={stream} />*/}
+          <Transcription />
         </div>
       </div>
     </div>

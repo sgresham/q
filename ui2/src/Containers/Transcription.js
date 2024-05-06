@@ -14,58 +14,71 @@ function formatTimestamp(timestamp) {
   return `${hours}:${minutes}:${seconds}`;
 }
 
-const StreamedTextContainer = ({ stream }) => {
-  const [text, setText] = useState([]);
-  const messagesEndRef = useRef(null);
-
-  useEffect(() => {
-    if (stream) {
-      const ws = new WebSocket("ws://10.10.10.30:7080");
-
-      ws.onopen = () => {
-        console.log("Connected to server");
-      };
-
-      ws.onmessage = (event) => {
-        try {
-          const jsonData = JSON.parse(event.data);
-          if (Array.isArray(jsonData)) {
-            setText((prevText) => [...prevText, ...jsonData]);
-          } else {
-            setText((prevText) => [...prevText, jsonData]);
-          }
-          // scrollToBottom();
-        } catch (error) {
-          console.error("Error parsing JSON:", error);
-        }
-      };
-
-      ws.onerror = (error) => {
-        console.error("WebSocket error:", error);
-      };
-
-      return () => {
-        ws.close();
-      };
-    }
-  }, [stream]);
-
-  // const scrollToBottom = () => {
-  //   messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-  // };
-
+const Transcription = (transcript) => {
+  console.log('[Transcript]', transcript)
   return (
     <div className="streaming-text">
       <div className="transcript-container">
-        {text.map((item, index) => (
+        Here's a JavaScript code that includes imports, functions, and components to achieve the functionality you described. This code assumes that you have Node.js installed on your computer.
+        {/* {text.map((item, index) => (
           <p key={index} className="transcript-paragraph">
             {formatTimestamp(item.timestamp)}: {item.message}
           </p>
         ))}
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} /> */}
       </div>
     </div>
   );
-};
 
-export default StreamedTextContainer;
+}
+
+// const StreamedTextContainer = ({ stream }) => {
+//   const [text, setText] = useState([]);
+//   const messagesEndRef = useRef(null);
+
+//   useEffect(() => {
+//     if (stream) {
+//       const ws = new WebSocket("ws://10.10.10.30:7080");
+
+//       ws.onopen = () => {
+//         console.log("Connected to server");
+//       };
+
+//       ws.onmessage = (event) => {
+//         try {
+//           const jsonData = JSON.parse(event.data);
+//           if (Array.isArray(jsonData)) {
+//             setText((prevText) => [...prevText, ...jsonData]);
+//           } else {
+//             setText((prevText) => [...prevText, jsonData]);
+//           }
+//           // scrollToBottom();
+//         } catch (error) {
+//           console.error("Error parsing JSON:", error);
+//         }
+//       };
+
+//       ws.onerror = (error) => {
+//         console.error("WebSocket error:", error);
+//       };
+
+//       return () => {
+//         ws.close();
+//       };
+//     }
+//   }, [stream]);
+
+//   // const scrollToBottom = () => {
+//   //   messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+//   // };
+
+//   return (
+//     <div className="streaming-text">
+//       <div className="transcript-container">
+//         Here is the corrected code:
+//       </div>
+//     </div>
+//   );
+// };
+
+export default Transcription;
