@@ -1,13 +1,15 @@
 import React from 'react';
+import NowPlaying from './NowPlaying';
 
-function StatusBar() {
+const StatusBar = ({ song }) => {
   return (
-    <div className="bg-blue-500 text-white p-4 h-10vh">
-      {/* Your status bar content goes here */}
-      {/* Example: */}
+    <div className="bg-blue-500 text-white p-4 h-10vh flex">
+      <div style={{ width: '33.3%', display: 'flex' }}>
+        <NowPlaying song={song} />
+      </div>
       <p>Status: Online</p>
     </div>
   );
-}
+};
 
 export default StatusBar;
