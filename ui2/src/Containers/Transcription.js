@@ -14,7 +14,7 @@ function formatTimestamp(timestamp) {
   return `${hours}:${minutes}:${seconds}`;
 }
 
-const Transcription = ({ stream }) => {
+const StreamedTextContainer = ({ stream }) => {
   const [text, setText] = useState([]);
   const messagesEndRef = useRef(null);
 
