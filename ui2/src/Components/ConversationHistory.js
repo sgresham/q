@@ -31,7 +31,7 @@ const ConversationHistory = ({ conversationHistory }) => {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div className="w-5/6 mx-auto">
       <div ref={containerRef} className="overflow-y-scroll max-h-lvh">
         {/* Render previous conversations */}
         {conversationHistory.map((conversation, index) => (

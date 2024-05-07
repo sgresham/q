@@ -1,10 +1,10 @@
-import { useState, useEffect, createContext } from 'react';
-import App from '../App';
+import { useState, useEffect, createContext } from "react";
+import App from "../App";
 
 const WebSocketManagerContext = createContext();
 
 const WebSocketManager = () => {
-  const [transcript, setTranscript] = useState({});
+  const [transcript, setTranscript] = useState([]);
   const [music, setMusic] = useState(null);
 
   useEffect(() => {
@@ -13,13 +13,14 @@ const WebSocketManager = () => {
     const transcriptws = new WebSocket("ws://10.10.10.30:7080");
 
     musicws.onmessage = (event) => {
-        // console.log('[Event] ', event)
-        setMusic((prevMusic) => ({ ...prevMusic, music: event.data }));
+      setMusic((prevMusic) => ({ ...prevMusic, music: event.data }));
     };
 
     transcriptws.onmessage = (event) => {
-        // console.log('[Event] ', event)
-        setTranscript((prevTranscripts) => ({ ...prevTranscripts, transcript: event.data }));
+      const newData = JSON.parse(event.data);
+      if (Array.isArray(newData) && newData.length > 0) {
+        setTranscript((prevTranscripts) => [...prevTranscripts, ...newData]);
+      }
     };
 
     return () => {

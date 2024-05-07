@@ -1,8 +1,8 @@
-import React from 'react';
-import { useContext, useEffect } from 'react';
-import { WebSocketManagerContext } from './Components/WebsocketManager';
-import MainContent from './Containers/MainComponent';
-import StatusBar from './Components/StatusBar';
+import React, { useEffect } from "react";
+import { useContext } from "react";
+import { WebSocketManagerContext } from "./Components/WebsocketManager";
+import MainContent from "./Containers/MainContent";
+import StatusBar from "./Components/StatusBar";
 
 function App() {
   const { music, transcript } = useContext(WebSocketManagerContext);
@@ -11,24 +11,10 @@ function App() {
     if (music?.music) {
       const parsedSocketData = JSON.parse(music.music);
       const lastRecord = parsedSocketData.slice(-1)[0];
-      const extractedData = JSON.parse(lastRecord.message)
+      const extractedData = JSON.parse(lastRecord.message);
       const track = extractedData.track;
 
-      return track
-    } else {
-      return [];
-    }
-  };
-
-  
-  const transcriptData = () => {
-    if (transcript?.transcript) {
-      const parsedSocketData = JSON.parse(transcript.transcript);
-      const lastRecord = parsedSocketData.slice(-1)[0];
-      const extractedData = JSON.parse(lastRecord.message)
-      const track = extractedData.track;
-
-      return track
+      return track;
     } else {
       return [];
     }
@@ -37,7 +23,7 @@ function App() {
   return (
     <div className="flex flex-col h-screen">
       <StatusBar song={songData()} />
-        <MainContent/>
+      <MainContent transcript={transcript} />
     </div>
   );
 }

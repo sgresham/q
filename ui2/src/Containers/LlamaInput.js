@@ -100,7 +100,7 @@ const LlamaInput = () => {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div className="w-5/6 mx-auto">
       {/* Render previous conversations */}
       <ConversationHistory conversationHistory={conversationHistory} />
       <div className="flex flex-wrap mb-4">
