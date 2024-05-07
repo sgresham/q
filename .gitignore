@@ -3,6 +3,8 @@ node_modules
 .python-version
 audio_files/
 models/
+*.ogg
+*.wav
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

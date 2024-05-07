@@ -25,7 +25,7 @@ const Transcription = ({ transcript }) => {
   }, [transcript]);
 
   return (
-    <div className="streaming-text overflow-y-scroll max-h-80%">
+    <div className="streaming-text overflow-y-scroll h-svh">
       <div className="w-5/6 mx-auto">
         {text.map((item, index) => (
           <p key={index} className="transcript-paragraph font-roboto">
