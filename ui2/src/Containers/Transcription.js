@@ -22,6 +22,7 @@ const Transcription = ({ transcript }) => {
       };
     });
     setText(cleanedTranscript);
+    console.log('[cleaned]', cleanedTranscript)
   }, [transcript]);
 
   return (

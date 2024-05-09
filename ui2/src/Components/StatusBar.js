@@ -1,5 +1,5 @@
 import React from 'react';
-import NowPlaying from './NowPlaying';
+import NowPlaying from './music/NowPlaying';
 
 const StatusBar = ({ song }) => {
   return (

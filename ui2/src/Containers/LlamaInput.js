@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Ollama } from "ollama/browser";
-import TextToSpeechStream from "../Components/streamFunction";
+import TextToSpeechStream from "../Components/tts/streamFunction";
 import SyntaxHighlighter from "react-syntax-highlighter";
 
 import models from "../Components/llm/modelList"
 import promptHelpers from "../Components/llm/modelHelpers";
-import RenderSegments from "../Components/RenderSegments";
-import ConversationHistory from "../Components/ConversationHistory";
+import RenderSegments from "../Components/llm/RenderSegments";
+import ConversationHistory from "../Components/llm/ConversationHistory";
 
 const ollama = new Ollama({ host: "http://10.10.10.30:11434" });
 

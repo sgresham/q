@@ -5,6 +5,7 @@ import Transcription from "./Transcription";
 
 const MainContent = ({transcript}) => {
 
+  console.log('[transcript]', transcript)
   return (
     <div className="flex flex-col flex-grow h-9/10">
       {/* Main content */}
@@ -19,7 +20,7 @@ const MainContent = ({transcript}) => {
         {/* Right section */}
         <div className="w-1/2 overflow-y-auto bg-gray-300">
           <h2 className="text-lg font-bold p-4">Transcript Central</h2>
-          <Transcription transcript={transcript}/>
+          {transcript !== undefined && transcript.length > 0 ? <Transcription transcript={transcript} /> : null}
         </div>
       </div>
     </div>
