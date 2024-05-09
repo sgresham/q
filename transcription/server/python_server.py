@@ -168,7 +168,7 @@ async def transcribe_and_send(client_id, websocket, new_audio_data):
         if DEBUG: print(f"Transcription Time: {transcription_time:.2f} seconds")
 
         print(f"Client ID {client_id}: Transcribed : {result['text']}")
-        transcript.info(result)
+        transcript.info(result['text'])
 
         if result['text']:
             await websocket.send(result['text'])
