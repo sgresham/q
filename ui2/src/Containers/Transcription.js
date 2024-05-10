@@ -11,17 +11,13 @@ function formatTimestamp(timestamp) {
 const Transcription = ({ transcript }) => {
   const [text, setText] = useState([]);
   useEffect(() => {
-    const cleanedTranscript = transcript.map((item) => {
-      let cleanMessage = item.message.replace(/'text'/g, '"text"');
-      cleanMessage = cleanMessage.replace(/'(?![a-zA-Z])/g, '"');
-      const parsedData = JSON.parse(cleanMessage);
-      const textValue = parsedData.text;
+    const formattedMessage = transcript.map((item) => {
       return {
         timestamp: formatTimestamp(item.timestamp),
-        message: JSON.stringify(textValue),
+        message: JSON.stringify(item.message),
       };
     });
-    setText(cleanedTranscript);
+    setText(formattedMessage);
     console.log('[cleaned]', cleanedTranscript)
   }, [transcript]);
 
