@@ -18,7 +18,6 @@ const Transcription = ({ transcript }) => {
       };
     });
     setText(formattedMessage);
-    console.log('[cleaned]', cleanedTranscript)
   }, [transcript]);
 
   return (
