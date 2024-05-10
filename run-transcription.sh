@@ -1,3 +1,3 @@
 #!/bin/bash
-cd ui
+cd ui2
 node server_transcription.js

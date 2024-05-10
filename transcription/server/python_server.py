@@ -87,7 +87,9 @@ DEBUG = False
 DEFAULT_CLIENT_CONFIG = {
     "language": None,  # multilingual
     "chunk_length_seconds": 5,
-    "chunk_offset_seconds": 0.5
+    "chunk_offset_seconds": 0.5,
+    "long_chunk_length_seconds": 60,
+    "long_chunk_offset_seconds": 0.5
 }
 
 
@@ -111,6 +113,7 @@ recognition_pipeline = pipeline("automatic-speech-recognition", model=model, tok
 
 connected_clients = {}
 client_buffers = {}
+long_client_buffers = {}
 client_temp_buffers = {}
 client_configs = {}
 # Counter for each client to keep track of file numbers
@@ -237,6 +240,7 @@ async def receive_audio(websocket, path):
     client_id = str(uuid.uuid4())
     connected_clients[client_id] = websocket
     client_buffers[client_id] = bytearray()
+    long_client_buffers[client_id] = bytearray()
     client_configs[client_id] = DEFAULT_CLIENT_CONFIG
 
     if DEBUG:
@@ -246,6 +250,7 @@ async def receive_audio(websocket, path):
         async for message in websocket:
             if isinstance(message, bytes):
                 client_buffers[client_id].extend(message)
+                long_client_buffers[client_id].extend(message)
             elif isinstance(message, str):
                 config = json.loads(message)
                 if config.get('type') == 'config':
@@ -258,13 +263,21 @@ async def receive_audio(websocket, path):
                 if DEBUG:
                     print(f"Unexpected message type from {client_id}")
 
-            # Process audio when enough data is received
+            # Process audio when enough data is received - Short Queue
             if len(client_buffers[client_id]) > int(client_configs[client_id]['chunk_length_seconds']) * SAMPLING_RATE * SAMPLES_WIDTH:
                 if DEBUG:
                     print(
                         f"Client ID {client_id}: receive_audio calling transcribe_and_send with length: {len(client_buffers[client_id])}")
                 await transcribe_and_send(client_id, websocket, client_buffers[client_id])
                 client_buffers[client_id].clear()
+
+                      # Process audio when enough data is received - Short Queue
+            if len(long_client_buffers[client_id]) > int(client_configs[client_id]['chunk_length_seconds']) * SAMPLING_RATE * SAMPLES_WIDTH:
+                if DEBUG:
+                    print(
+                        f"Client ID {client_id}: receive_audio calling transcribe_and_send with length: {len(long_client_buffers[client_id])}")
+                await transcribe_and_send(client_id, websocket, long_client_buffers[client_id])
+                long_client_buffers[client_id].clear()
 
     except websockets.ConnectionClosed as e:
         if DEBUG:
