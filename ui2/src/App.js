@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useContext } from "react";
 import { WebSocketManagerContext } from "./Components/WebsocketManager";
-import MainContent from "./Containers/MainContent";
+import MainContent from "./Components/MainContent";
 import StatusBar from "./Components/StatusBar";
 
 function App() {

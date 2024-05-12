@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
-import LlamaInput from "./LlamaInput";
-import Transcription from "./Transcription";
+import LlamaInput from "../Containers/LlamaInput";
+import Transcription from "../Containers/Transcription";
 
 const MainContent = ({transcript}) => {
 

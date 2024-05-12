@@ -25,6 +25,9 @@ from pyannote.audio.pipelines import VoiceActivityDetection
 import sys
 import os
 
+import transcribe_long
+
+
 # Check if CUDA is available
 if torch.cuda.is_available():
     print("CUDA is available!")
@@ -89,7 +92,9 @@ DEFAULT_CLIENT_CONFIG = {
     "chunk_length_seconds": 5,
     "chunk_offset_seconds": 0.5,
     "long_chunk_length_seconds": 60,
-    "long_chunk_offset_seconds": 0.5
+    "long_chunk_offset_seconds": 0.5,
+    "alt_long_chunk_length_seconds": 60,
+    "alt_long_chunk_offset_seconds": 0.5
 }
 
 
@@ -241,6 +246,7 @@ async def receive_audio(websocket, path):
     connected_clients[client_id] = websocket
     client_buffers[client_id] = bytearray()
     long_client_buffers[client_id] = bytearray()
+    alt_long_client_buffers[client_id] = bytearray()
     client_configs[client_id] = DEFAULT_CLIENT_CONFIG
 
     if DEBUG:
@@ -251,6 +257,7 @@ async def receive_audio(websocket, path):
             if isinstance(message, bytes):
                 client_buffers[client_id].extend(message)
                 long_client_buffers[client_id].extend(message)
+                alt_long_client_buffers[client_id].extend(message)
             elif isinstance(message, str):
                 config = json.loads(message)
                 if config.get('type') == 'config':
@@ -271,13 +278,21 @@ async def receive_audio(websocket, path):
                 await transcribe_and_send(client_id, websocket, client_buffers[client_id])
                 client_buffers[client_id].clear()
 
-                      # Process audio when enough data is received - Short Queue
+            # Process audio when enough data is received - Long Queue - 30 Seconds padding
             if len(long_client_buffers[client_id]) > int(client_configs[client_id]['chunk_length_seconds']) * SAMPLING_RATE * SAMPLES_WIDTH:
                 if DEBUG:
                     print(
                         f"Client ID {client_id}: receive_audio calling transcribe_and_send with length: {len(long_client_buffers[client_id])}")
                 await transcribe_and_send(client_id, websocket, long_client_buffers[client_id])
                 long_client_buffers[client_id].clear()
+
+            # Process audio when enough data is received - Long Queue - No padding
+            if len(alt_long_chunk_length_seconds[client_id]) > int(client_configs[client_id]['chunk_length_seconds']) * SAMPLING_RATE * SAMPLES_WIDTH:
+                if DEBUG:
+                    print(
+                        f"Client ID {client_id}: receive_audio calling transcribe_and_send with length: {len(alt_long_chunk_length_seconds[client_id])}")
+                await transcribe_and_send(client_id, websocket, alt_long_chunk_length_seconds[client_id])
+                alt_long_chunk_length_seconds[client_id].clear()
 
     except websockets.ConnectionClosed as e:
         if DEBUG:
